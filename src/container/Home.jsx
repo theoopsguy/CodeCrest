@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import { Logo } from "../assets";
 import { MdHome } from "react-icons/md";
 import { FaSearchengin } from "react-icons/fa6";
+import {Projects, Signup} from "../container";
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
@@ -84,6 +85,14 @@ const Home = () => {
           )}
 
           {user && <div></div>}
+        </div>
+
+        {/* bottom section */}
+        <div className="w-full">
+          <Routes>
+            <Route path="/*" element={<Projects />} />
+            <Route path="/auth" element={<Signup />} />
+          </Routes>
         </div>
       </div>
     </>
