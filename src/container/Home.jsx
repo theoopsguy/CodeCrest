@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { HiChevronDoubleLeft } from "react-icons/hi2";
+import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Logo } from "../assets";
 import { MdHome } from "react-icons/md";
+import { FaSearchengin } from "react-icons/fa6";
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
@@ -21,7 +22,11 @@ const Home = () => {
           onClick={() => setisSideMenu(!isSideMenu)}
           className="w-8 h-8 bg-secondary rounded-tr-lg rounded-br-lg absolute -right-6 flex items-center justify-center cursor-pointer"
         >
-          <HiChevronDoubleLeft className="text-white text-xl" />
+          {!isSideMenu ? (
+            <HiChevronDoubleLeft className="text-white text-xl" />
+          ) : (
+            <HiChevronDoubleRight className="text-white text-xl" />
+          )}
         </motion.div>
 
         <div className="overflow-hidden w-full flex flex-col gap-4">
@@ -51,7 +56,21 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div></div>
+      <div className="flex-1 min-h-screen max-h-screen overflow-y-scroll h-full flex-col items-start justify-start px-4 md:px-12 py-4 md:py-12">
+        {/* top section */}
+        <div className="w-full flex items-center justify-between gap-3">
+          {/* search */}
+          <div className="bg-secondary w-full px-4 py-3 rounded-md flex items-center justify-center">
+            <FaSearchengin className="text-primaryText text-2xl" />
+            <input
+              type="text"
+              className="flex-1 px-4 py-1 text-xl bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600"
+              placeholder="Search here ..."
+            />
+          </div>
+          {/* profile section */}
+        </div>
+      </div>
     </>
   );
 };
