@@ -60,7 +60,7 @@ const Home = () => {
         {/* top section */}
         <div className="w-full flex items-center justify-between gap-3">
           {/* search */}
-          <div className="bg-secondary w-full px-4 py-3 rounded-md flex items-center justify-center">
+          <div className="bg-secondary w-full px-4 py-3 rounded-md flex items-center justify-center gap-3">
             <FaSearchengin className="text-primaryText text-2xl" />
             <input
               type="text"
@@ -69,6 +69,21 @@ const Home = () => {
             />
           </div>
           {/* profile section */}
+          {!user && (
+            <motion.div
+              whileTap={{ scale: 0.8 }}
+              className="flex items-center justify-center gap-3"
+            >
+              <Link
+                to={"/home/auth"}
+                className="bg-emerald-500 px-6 py-2 rounded-md text-white text-lg cursor-pointer hover:bg-emerald-700"
+              >
+                Signup
+              </Link>
+            </motion.div>
+          )}
+
+          {user && <div></div>}
         </div>
       </div>
     </>
