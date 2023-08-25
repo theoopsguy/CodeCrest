@@ -1,20 +1,21 @@
-import React, { useState } from "react";
-import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi2";
-import { motion } from "framer-motion";
-import { Link, Route, Routes } from "react-router-dom";
-import { Logo } from "../assets";
-import { MdHome } from "react-icons/md";
-import { FaSearchengin } from "react-icons/fa6";
-import {Projects, Signup} from "../container";
+import React, { useState } from 'react';
+import { HiChevronDoubleLeft, HiChevronDoubleRight } from 'react-icons/hi2';
+import { motion } from 'framer-motion';
+import { Link, Route, Routes } from 'react-router-dom';
+import { Logo } from '../assets';
+import { MdHome } from 'react-icons/md';
+import { FaSearchengin } from 'react-icons/fa6';
+import { Projects, Signup } from '../container';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
-  const [user, setuser] = useState(null);
+  const user = useSelector((state) => state.user);
   return (
     <>
       <div
         className={`w-2 ${
-          isSideMenu ? "w-2" : "flex-[.2] xl:flex-[.2]"
+          isSideMenu ? 'w-2' : 'flex-[.2] xl:flex-[.2]'
         } min-h-screen max-h-screen relative bg-secondary px-3 py-6 flex flex-col items-center justify-start gap-4 transition-all duration-200 ease-in-out`}
       >
         {/* anchor */}
@@ -37,20 +38,15 @@ const Home = () => {
           </Link>
 
           {/* start coding */}
-          <Link to={"/newProject"}>
+          <Link to={'/newProject'}>
             <div className="px-6 py-3 flex items-center justify-center rounded-xl border border-gray-400 cursor-pointer group hover:border-gray-200">
-              <p className="text-gray-400 group-hover:text-gray-200 capitalize">
-                Start Coding
-              </p>
+              <p className="text-gray-400 group-hover:text-gray-200 capitalize">Start Coding</p>
             </div>
           </Link>
 
           {/* Home nav */}
           {user && (
-            <Link
-              to={"/home/projects"}
-              className="flex items-center justify-center gap-6"
-            >
+            <Link to={'/home/projects'} className="flex items-center justify-center gap-6">
               <MdHome className="text-primaryText text-xl" />
               <p className="text-primaryText text-lg">Home</p>
             </Link>
@@ -76,7 +72,7 @@ const Home = () => {
               className="flex items-center justify-center gap-3"
             >
               <Link
-                to={"/home/auth"}
+                to={'/home/auth'}
                 className="bg-emerald-500 px-6 py-2 rounded-md text-white text-lg cursor-pointer hover:bg-emerald-700"
               >
                 Signup
