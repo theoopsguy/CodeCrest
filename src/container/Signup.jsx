@@ -1,16 +1,61 @@
-import React, { useState } from "react";
-import { UserAuthInput } from "../components";
-import { FaEnvelope, FaGithub } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
-import { MdPassword } from "react-icons/md";
-import { motion } from "framer-motion";
-import { signInWithGithub, signInWithGoogle } from "../utils/helpers";
+import React, { useState } from 'react';
+import { UserAuthInput } from '../components';
+import { FaEnvelope, FaGithub } from 'react-icons/fa6';
+import { FcGoogle } from 'react-icons/fc';
+import { MdPassword } from 'react-icons/md';
+import { AnimatePresence, motion } from 'framer-motion';
+import { signInWithGithub, signInWithGoogle } from '../utils/helpers';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebase.config';
 
 const Signup = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [emailValidationStatus, setEmailValidationStatus] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [alert, setAlert] = useState('');
+
+  const auth = getAuth();
+  const createNewUser = async () => {
+    if (emailValidationStatus) {
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed up
+          console.log(userCredential.user);
+          setDoc(
+            doc(db, 'users', userCredential.user.uid),
+            userCredential.user.providerData[0]
+          ).then(() => {
+            // dispatch the action to redux store
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  const loginWithEmailPassword = async () => {
+    if (emailValidationStatus) {
+      await signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          console.log(userCredential.user);
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.message.includes('user-not-found')) setAlert('User not found. Please sign up.');
+          else if (error.message.includes('wrong-password')) setAlert('Wrong password');
+          else setAlert('Login failed. Please try again later.');
+
+          setTimeout(() => {
+            setAlert('');
+          }, 3000);
+        });
+    }
+  };
+
   return (
     <div className="w-full py-6">
       <div className="w-full flex flex-col items-center justify-center py-8">
@@ -34,8 +79,23 @@ const Signup = () => {
             Icon={MdPassword}
             setEmailValidationStatus={setEmailValidationStatus}
           />
+          <AnimatePresence>
+            {alert && (
+              <motion.p
+                key={'AlertMessage'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="text-red-500"
+              >
+                {alert}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
           {isLogin ? (
             <motion.div
+              onClick={loginWithEmailPassword}
               whileTap={{ scale: 0.8 }}
               className="flex items-center justify-center w-full py-3 rounded-xl hover:bg-emeral-400 cursor-pointer bg-emerald-500"
             >
@@ -43,6 +103,7 @@ const Signup = () => {
             </motion.div>
           ) : (
             <motion.div
+              onClick={createNewUser}
               whileTap={{ scale: 0.8 }}
               className="flex items-center justify-center w-full py-3 rounded-xl hover:bg-emeral-400 cursor-pointer bg-emerald-500"
             >

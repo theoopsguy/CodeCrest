@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
-import { Home } from "./container";
-import { auth } from "./config/firebase.config";
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Home } from './container';
+import { auth } from './config/firebase.config';
 
 const App = () => {
   const navigate = useNavigate();
@@ -10,9 +10,12 @@ const App = () => {
       if (user) {
         console.log(user);
       } else {
-        navigate("/home/auth", { replace: true });
+        navigate('/home/auth', { replace: true });
       }
     });
+
+    // clean up the listener event
+    return () => unsubscribe();
   }, []);
   return (
     <div className="w-screen h-screen flex items-start justify-start overflow-hidden">
