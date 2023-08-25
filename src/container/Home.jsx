@@ -7,6 +7,7 @@ import { MdHome } from 'react-icons/md';
 import { FaSearchengin } from 'react-icons/fa6';
 import { Projects, Signup } from '../container';
 import { useSelector } from 'react-redux';
+import { UserProfileDetails } from '../components';
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
@@ -80,7 +81,7 @@ const Home = () => {
             </motion.div>
           )}
 
-          {user && <div></div>}
+          {user && <UserProfileDetails />}
         </div>
 
         {/* bottom section */}
