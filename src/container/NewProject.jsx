@@ -4,12 +4,26 @@ import { FcSettings } from 'react-icons/fc';
 import SplitPane from 'react-split-pane';
 import CodeMirror from '@uiw/react-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Logo } from '../assets';
+import { Link } from 'react-router-dom';
+import { MdCheck, MdEdit } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import UserProfileDetails from '../components/UserProfileDetails';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebase.config';
+import Alert from '../components/Alert';
 
 const NewProject = () => {
   const [html, setHtml] = useState('<!-- Simply enter the HTML body content here. -->');
-  const [css, setCss] = useState('');
-  const [js, setJs] = useState('');
+  const [css, setCss] = useState('/* Add style to your page here */');
+  const [js, setJs] = useState('// Write your JavaScript functions and logic here.');
   const [input, setInput] = useState('');
+  const [showTitle, setShowTitle] = useState(true);
+  const [title, setTitle] = useState('Untitled');
+  const [alert, setAlert] = useState(false);
+
+  const user = useSelector((state) => state.user);
 
   useEffect(() => {
     updateInput();
@@ -29,19 +43,123 @@ const NewProject = () => {
     setInput(combinedInput);
   };
 
+  const saveCode = async () => {
+    const id = `${Date.now()}`;
+    const _doc = {
+      id: id,
+      title: title,
+      html: html,
+      css: css,
+      js: js,
+      user: user,
+      code: input
+    };
+
+    await setDoc(doc(db, 'Projects', id), _doc)
+      .then((res) => {
+        setAlert(true);
+      })
+      .catch((err) => console.log(err));
+
+    setTimeout(() => {
+      setAlert(false);
+    }, 3000);
+  };
+
   return (
     <div className="w-screen h-screen flex flex-col items-start justify-start overflow-hidden">
       {/* alert area */}
-
+      <AnimatePresence>
+        {alert && <Alert status={'Success'} alertMessage={'Project saved successfully!'} />}
+      </AnimatePresence>
       {/* header */}
-
+      <header className="w-full flex items-center justify-between px-12 py-4">
+        <div className="flex items-center justify-center gap-6">
+          <Link to={'/home/projects'}>
+            <img className="w-32 h-auto object-contain" src={Logo} alt="logo" />
+          </Link>
+          <div className="flex items-start justify-start flex-col">
+            {/* title */}
+            <div className="flex items-center justify-center gap-3">
+              <AnimatePresence>
+                {showTitle ? (
+                  <>
+                    <motion.p key={'titleDisplay'} className="px-3 py-2 text-white text-lg">
+                      {title}
+                    </motion.p>
+                  </>
+                ) : (
+                  <>
+                    <motion.input
+                      key={'TitleInput'}
+                      type="text"
+                      className="px-3 py-2 text-primaryText text-base bg-transparent border-none rounded-md"
+                      placeholder="Your title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {showTitle ? (
+                  <>
+                    <motion.div
+                      key={'MdEdit'}
+                      className="cursor-pointer"
+                      onClick={() => setShowTitle(false)}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      <MdEdit className="text-2xl text-emerald-500" />
+                    </motion.div>
+                  </>
+                ) : (
+                  <>
+                    <motion.div
+                      key={'MdCheck'}
+                      className="cursor-pointer"
+                      onClick={() => setShowTitle(true)}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      {' '}
+                      <MdCheck className="text-2xl text-emerald-500" />
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+            {/* follow */}
+            <div className="flex items-center justify-center gap-2 px-3 -mt-2">
+              <p className="text-primaryText text-sm">
+                {user?.displayName ? user?.displayName : `${user?.email.split('@')[0]}`}
+              </p>
+              <motion.p
+                whileTap={{ scale: 0.9 }}
+                className="text-primary text-[10px] bg-emerald-500 rounded-sm px-2 py-[1px] font-semibold cursor-pointer"
+              >
+                Follow
+              </motion.p>
+            </div>
+          </div>
+        </div>
+        {/* save & user area */}
+        <div className="flex items-center justify-center gap-4">
+          <motion.button
+            className="px-6 py-4 bg-primaryText cursor-pointer text-base text-primary font-semibold rounded-md"
+            whileTap={{ scale: 0.8 }}
+            onClick={saveCode}
+          >
+            Save
+          </motion.button>
+          <UserProfileDetails />
+        </div>
+      </header>
       {/* coding area */}
-
       <div>
         {/* horizontal */}
         <SplitPane split="horizontal" minSize={100} maxSize={-100} defaultSize={'50%'}>
           {/* top coding section */}
-          <SplitPane split="vertical" minSize={300}>
+          <SplitPane split="vertical" minSize={300} maxSize={600}>
             {/* html section */}
             <div className="w-full h-full flex flex-col items-start justify-start">
               <div className="w-full flex items-center justify-between">
@@ -68,7 +186,7 @@ const NewProject = () => {
                 />
               </div>
             </div>
-            <SplitPane split="vertical" minSize={300}>
+            <SplitPane split="vertical" minSize={300} maxSize={600}>
               {/* css section */}
               <div className="w-full h-full flex flex-col items-start justify-start">
                 <div className="w-full flex items-center justify-between">
