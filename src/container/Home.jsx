@@ -6,12 +6,17 @@ import { Logo } from '../assets';
 import { MdHome } from 'react-icons/md';
 import { FaSearchengin } from 'react-icons/fa6';
 import { Projects, Signup } from '../container';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { UserProfileDetails } from '../components';
+import { SET_SEARCH_TERM } from '../context/actions/searchActions';
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
   const user = useSelector((state) => state.user);
+  const searchTerm = useSelector((state) =>
+    state.searchTerm?.searchTerm ? state.searchTerm.searchTerm : ''
+  );
+  const dispatch = useDispatch();
   return (
     <>
       <div
@@ -62,7 +67,9 @@ const Home = () => {
             <FaSearchengin className="text-primaryText text-2xl" />
             <input
               type="text"
+              value={searchTerm}
               className="flex-1 px-4 py-1 text-xl bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600"
+              onChange={(e) => dispatch(SET_SEARCH_TERM(e.target.value))}
               placeholder="Search here ..."
             />
           </div>
