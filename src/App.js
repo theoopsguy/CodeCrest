@@ -4,8 +4,9 @@ import { Home, NewProject } from './container';
 import { auth, db } from './config/firebase.config';
 import Spinner from './components/Spinner';
 import { useDispatch } from 'react-redux';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, orderBy, setDoc, collection, onSnapshot, query } from 'firebase/firestore';
 import { SET_USER } from './context/actions/userActions';
+import { SET_PROJECTS } from './context/actions/projectActions';
 
 const App = () => {
   const navigate = useNavigate();
@@ -28,6 +29,17 @@ const App = () => {
 
     // clean up the listener event
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const projectsQuery = query(collection(db, 'Projects'), orderBy('id', 'desc'));
+
+    const unsubscribe = onSnapshot(projectsQuery, (snapshot) => {
+      const projects = snapshot.docs.map((doc) => doc.data());
+      dispatch(SET_PROJECTS(projects));
+    });
+
+    return unsubscribe;
   }, []);
   return (
     <>
