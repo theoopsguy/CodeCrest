@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { Home, NewProject } from './container';
+import { Home, NewProject, ExistingProject } from './container';
 import { auth, db } from './config/firebase.config';
 import Spinner from './components/Spinner';
 import { useDispatch } from 'react-redux';
@@ -52,6 +52,7 @@ const App = () => {
           <Routes>
             <Route path="/home/*" element={<Home />} />
             <Route path="/newProject" element={<NewProject />} />
+            <Route path="/project/*" element={<ExistingProject />} />
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </div>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_PROJECT_CONTENT } from '../context/actions/viewProjectActions';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
   const projects = useSelector((state) => state.projects);
@@ -38,7 +40,7 @@ const Projects = () => {
 };
 
 const ProjectCard = ({ project, index }) => {
-  console.log(index, project);
+  const dispatch = useDispatch();
   return (
     <motion.div
       key={index}
@@ -46,7 +48,8 @@ const ProjectCard = ({ project, index }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, delay: index * 0.3 }}
-      className="w-full cursor-pointer md:w-[450px] h-[375px] bg-secondary rounded-md p-4 flex flex-col items-center justify-center gap-4"
+      className="w-full md:w-[450px] h-[375px] bg-secondary rounded-md p-4 flex flex-col items-center justify-center gap-4"
+      whileHover={{ scale: 1.05 }}
     >
       <div
         className="bg-primary w-full h-full rounded-md overflow-hidden"
@@ -58,7 +61,6 @@ const ProjectCard = ({ project, index }) => {
           style={{ border: 'none', width: '100%', height: '100%' }}
         />
       </div>
-
       <div className="flex items-center justfy-start gap-3 w-full">
         {/* user image */}
         <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-emerald-400 cursor-pointer overflow-hidden">
@@ -77,14 +79,16 @@ const ProjectCard = ({ project, index }) => {
           )}
         </div>
         {/* project title & user name */}
-        <div>
-          <p className="text-white text-lg capitalize">{project?.title}</p>
-          <p className="text-primaryText text-sm capitalize">
-            {project?.user?.displayName
-              ? project?.user?.displayName
-              : `${project?.user?.email.split('@')[0]}`}
-          </p>
-        </div>
+        <Link to={`/project/${project.id}`} onClick={() => dispatch(SET_PROJECT_CONTENT(project))}>
+          <div className="cursor-pointer">
+            <p className="text-white text-lg capitalize">{project?.title}</p>
+            <p className="text-primaryText text-sm capitalize">
+              {project?.user?.displayName
+                ? project?.user?.displayName
+                : `${project?.user?.email.split('@')[0]}`}
+            </p>
+          </div>
+        </Link>
       </div>
     </motion.div>
   );

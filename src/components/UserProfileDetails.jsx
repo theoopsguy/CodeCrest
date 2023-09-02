@@ -37,7 +37,7 @@ bg-secondary cursor-pointer"
         {showProfileMenu && (
           <motion.div
             className="bg-secondary absolute top-16 right-0 px-4 py-3
-rounded-xl shadow-md z—l0 flex flex-col items—start justify—start gap-4 min-w-[225px]"
+rounded-xl shadow-md z-10 flex flex-col items—start justify—start gap-4 min-w-[225px]"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
