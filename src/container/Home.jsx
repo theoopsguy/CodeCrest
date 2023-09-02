@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from 'react-icons/hi2';
 import { motion } from 'framer-motion';
 import { Link, Route, Routes } from 'react-router-dom';
@@ -9,6 +9,9 @@ import { Projects, Signup } from '../container';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserProfileDetails } from '../components';
 import { SET_SEARCH_TERM } from '../context/actions/searchActions';
+import { collection, limit, onSnapshot, or, query, where } from 'firebase/firestore';
+import { db } from '../config/firebase.config';
+import { SET_PROJECTS } from '../context/actions/projectActions';
 
 const Home = () => {
   const [isSideMenu, setisSideMenu] = useState(false);
@@ -17,6 +20,25 @@ const Home = () => {
     state.searchTerm?.searchTerm ? state.searchTerm.searchTerm : ''
   );
   const dispatch = useDispatch();
+  useEffect(() => {
+    const baseQuery = collection(db, 'Projects');
+    const publicProjectsCondition = where('isPublic', '==', true);
+    const projectsQuery = user
+      ? query(
+          baseQuery,
+          or(where('user.email', '==', user.email), publicProjectsCondition),
+          limit(20)
+        )
+      : query(baseQuery, publicProjectsCondition, limit(20));
+
+    const unsubscribe = onSnapshot(projectsQuery, (snapshot) => {
+      const projects = snapshot.docs.map((doc) => doc.data());
+      dispatch(SET_PROJECTS(projects));
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <>
       <div

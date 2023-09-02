@@ -51,7 +51,8 @@ const NewProject = () => {
       css: css,
       js: js,
       user: user,
-      code: input
+      code: input,
+      isPublic: false
     };
 
     await setDoc(doc(db, 'Projects', id), _doc)

@@ -4,9 +4,8 @@ import { Home, NewProject, ExistingProject } from './container';
 import { auth, db } from './config/firebase.config';
 import Spinner from './components/Spinner';
 import { useDispatch } from 'react-redux';
-import { doc, orderBy, setDoc, collection, onSnapshot, query } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { SET_USER } from './context/actions/userActions';
-import { SET_PROJECTS } from './context/actions/projectActions';
 
 const App = () => {
   const navigate = useNavigate();
@@ -15,32 +14,27 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(user);
-        setDoc(doc(db, 'users', user.uid), user?.providerData[0]).then(() => {
-          dispatch(SET_USER(user?.providerData[0]));
-          navigate('/home/projects', { replace: true });
-        });
+        setDoc(doc(db, 'users', user.uid), user?.providerData[0])
+          .then(() => {
+            dispatch(SET_USER(user?.providerData[0]));
+            navigate('/home/projects', { replace: true });
+          })
+          .then(() => {
+            setIsLoading(false);
+          });
       } else {
         navigate('/home/auth', { replace: true });
       }
-
-      setIsLoading(false);
     });
+
+    setInterval(() => {
+      setIsLoading(false);
+    }, 5000);
 
     // clean up the listener event
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const projectsQuery = query(collection(db, 'Projects'), orderBy('id', 'desc'));
-
-    const unsubscribe = onSnapshot(projectsQuery, (snapshot) => {
-      const projects = snapshot.docs.map((doc) => doc.data());
-      dispatch(SET_PROJECTS(projects));
-    });
-
-    return unsubscribe;
-  }, []);
   return (
     <>
       {isLoading ? (

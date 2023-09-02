@@ -22,7 +22,6 @@ const Signup = () => {
       await createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed up
-          console.log(userCredential.user);
           setDoc(
             doc(db, 'users', userCredential.user.uid),
             userCredential.user.providerData[0]
@@ -32,6 +31,14 @@ const Signup = () => {
         })
         .catch((error) => {
           console.log(error);
+          if (error.message.includes('weak-password')) setAlert('Weak Password.');
+          else if (error.message.includes('email-already-in-use'))
+            setAlert('Email already in use. Please login.');
+          else setAlert('Signup failed. Please try again later.');
+
+          setTimeout(() => {
+            setAlert('');
+          }, 3000);
         });
     }
   };
@@ -41,7 +48,6 @@ const Signup = () => {
       await signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
-          console.log(userCredential.user);
         })
         .catch((error) => {
           console.log(error);
