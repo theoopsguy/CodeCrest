@@ -20,7 +20,7 @@ const NewProject = () => {
   const [input, setInput] = useState('');
   const [showTitle, setShowTitle] = useState(true);
   const [title, setTitle] = useState('Untitled');
-  const [alert, setAlert] = useState(false);
+  const [alertStatus, setAlertStatus] = useState('');
 
   const user = useSelector((state) => state.user);
 
@@ -57,12 +57,14 @@ const NewProject = () => {
 
     await setDoc(doc(db, 'Projects', id), _doc)
       .then((res) => {
-        setAlert(true);
+        setAlertStatus('Success');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setAlertStatus('Error');
+      });
 
     setTimeout(() => {
-      setAlert(false);
+      setAlertStatus('');
     }, 3000);
   };
 
@@ -70,7 +72,7 @@ const NewProject = () => {
     <div className="w-screen h-screen flex flex-col items-start justify-start overflow-hidden">
       {/* alert area */}
       <AnimatePresence>
-        {alert && <Alert status={'Success'} alertMessage={'Project saved successfully!'} />}
+        {alertStatus && <Alert status={alertStatus} alertMessage={'Project saved successfully!'} />}
       </AnimatePresence>
       {/* header */}
       <header className="w-full flex items-center justify-between px-12 py-4">
@@ -128,7 +130,6 @@ const NewProject = () => {
                 )}
               </AnimatePresence>
             </div>
-            {/* follow */}
             <div className="flex items-center justify-center gap-2 px-3 -mt-2">
               <p className="text-primaryText text-sm">
                 {user?.displayName ? user?.displayName : `${user?.email.split('@')[0]}`}
