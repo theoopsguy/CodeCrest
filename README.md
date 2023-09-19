@@ -20,7 +20,7 @@ yarn start
 
 ## Demo:
 
-Project is hosted here: https://codecrest.theoopsguy.com/
+Project is hosted here: https://codecrest-f725d.web.app/
 
 Screenshots:
 
